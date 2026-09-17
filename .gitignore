@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual Environment
+.venv/
+venv/
+env/
+
+# macOS
+.DS_Store
+
+# IDE
+.vscode/
+
+# SQLite database
+*.db
+*.sqlite
+*.sqlite3
+
+# Python test/cache
+.pytest_cache/
+.coverage
+
+# Generated reports
+reports/generated/
+
+# Temporary files
+*.tmp
+*.log
