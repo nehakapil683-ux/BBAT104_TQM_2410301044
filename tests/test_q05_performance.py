@@ -1,7 +1,6 @@
 import time
 
 from database.db import (
-    init_database,
     insert_sample_menu_data,
     get_menu_items,
     get_dashboard_data,
@@ -21,7 +20,6 @@ def main():
     print("Q05 Performance Verification")
     print("=" * 40)
 
-    init_database()
     insert_sample_menu_data()
 
     _, search_time = measure(
@@ -35,8 +33,8 @@ def main():
     )
 
     _, report_time = measure(
-        "Paginated Report",
-        lambda: get_sales_report(page=1, page_size=10),
+        "Sales Report",
+        get_sales_report,
     )
 
     print("\nQ05 Features Checked:")
