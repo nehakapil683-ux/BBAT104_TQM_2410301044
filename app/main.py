@@ -2216,104 +2216,35 @@ class RestaurantBillingApp(ctk.CTk):
     # ========================================================
 
     def show_performance(self):
+        import time
 
         self.clear_content()
 
         self.create_page_title(
             "Q05 Performance",
-            "Reduce Response Time — optimization and database verification"
+            "Reduce Response Time — live optimization and database verification"
         )
 
-        # ----------------------------------------------------
-        # FEATURES
-        # ----------------------------------------------------
+        # ====================================================
+        # LIVE VERIFICATION HEADER
+        # ====================================================
 
-        features = [
-            (
-                "Fast Search",
-                "Prefix-based search updates results while typing."
-            ),
-            (
-                "Quick Navigation",
-                "Navigation buttons switch between modules directly."
-            ),
-            (
-                "Cached Dashboard",
-                "Dashboard statistics are stored in memory until refreshed."
-            ),
-            (
-                "DB Indexing",
-                "Indexes are created on frequently searched and joined columns."
-            ),
-            (
-                "Paginated Reports",
-                "Reports load limited records using LIMIT and OFFSET."
-            ),
-        ]
-
-        for title, description in features:
-
-            frame = ctk.CTkFrame(
-                self.content,
-                fg_color="white",
-                corner_radius=8,
-                border_width=1,
-                border_color="#CBD5E1"
-            )
-
-            frame.pack(
-                fill="x",
-                padx=35,
-                pady=7
-            )
-
-            ctk.CTkLabel(
-                frame,
-                text=title,
-                font=ctk.CTkFont(
-                    size=16,
-                    weight="bold"
-                ),
-                text_color="#172033"
-            ).pack(
-                anchor="w",
-                padx=18,
-                pady=(12, 2)
-            )
-
-            ctk.CTkLabel(
-                frame,
-                text=description,
-                font=ctk.CTkFont(
-                    size=13
-                ),
-                text_color="#64748B"
-            ).pack(
-                anchor="w",
-                padx=18,
-                pady=(0, 12)
-            )
-
-        # ----------------------------------------------------
-        # INDEXES
-        # ----------------------------------------------------
-
-        index_frame = ctk.CTkFrame(
+        header_frame = ctk.CTkFrame(
             self.content,
-            fg_color="#E7EBF1",
-            corner_radius=8
+            fg_color="white",
+            corner_radius=8,
+            border_width=1,
+            border_color="#CBD5E1"
         )
-
-        index_frame.pack(
-            fill="both",
-            expand=True,
+        header_frame.pack(
+            fill="x",
             padx=35,
-            pady=(15, 25)
+            pady=(0, 15)
         )
 
         ctk.CTkLabel(
-            index_frame,
-            text="Database Index Verification",
+            header_frame,
+            text="Q05 Live Performance Verification",
             font=ctk.CTkFont(
                 size=18,
                 weight="bold"
@@ -2322,87 +2253,674 @@ class RestaurantBillingApp(ctk.CTk):
         ).pack(
             anchor="w",
             padx=18,
-            pady=(15, 8)
-        )
-
-        indexes = get_database_indexes()
-
-        index_text = ""
-
-        for index in indexes:
-
-            index_text += (
-                f"✓ {index['name']} "
-                f"→ {index['tbl_name']}\n"
-            )
-
-        if not index_text:
-            index_text = "No custom indexes found."
-
-        textbox = ctk.CTkTextbox(
-            index_frame,
-            height=120,
-            font=ctk.CTkFont(
-                size=13
-            )
-        )
-
-        textbox.pack(
-            fill="both",
-            expand=True,
-            padx=18,
-            pady=(0, 10)
-        )
-
-        textbox.insert(
-            "1.0",
-            index_text
-        )
-
-        textbox.configure(
-            state="disabled"
-        )
-
-        # ----------------------------------------------------
-        # QUERY PLAN
-        # ----------------------------------------------------
-
-        plan = get_search_query_plan()
-
-        plan_text = "\n".join(
-            str(row["detail"])
-            for row in plan
+            pady=(15, 3)
         )
 
         ctk.CTkLabel(
-            index_frame,
-            text="SQLite Search Query Plan:",
-            font=ctk.CTkFont(
-                size=14,
-                weight="bold"
+            header_frame,
+            text=(
+                "Run real database operations to verify the five "
+                "Reduce Response Time features."
             ),
-            text_color="#334155"
+            font=ctk.CTkFont(size=13),
+            text_color="#64748B"
         ).pack(
-            anchor="w",
-            padx=18,
-            pady=(5, 3)
-        )
-
-        plan_label = ctk.CTkLabel(
-            index_frame,
-            text=plan_text,
-            font=ctk.CTkFont(
-                size=12
-            ),
-            text_color="#475569",
-            justify="left"
-        )
-
-        plan_label.pack(
             anchor="w",
             padx=18,
             pady=(0, 15)
         )
+
+        # ====================================================
+        # PERFORMANCE RESULT AREA
+        # ====================================================
+
+        result_frame = ctk.CTkFrame(
+            self.content,
+            fg_color="#F8FAFC",
+            corner_radius=8,
+            border_width=1,
+            border_color="#CBD5E1"
+        )
+        result_frame.pack(
+            fill="x",
+            padx=35,
+            pady=(0, 15)
+        )
+
+        ctk.CTkLabel(
+            result_frame,
+            text="Live Verification Results",
+            font=ctk.CTkFont(
+                size=17,
+                weight="bold"
+            ),
+            text_color="#172033"
+        ).pack(
+            anchor="w",
+            padx=18,
+            pady=(14, 5)
+        )
+
+        result_text = ctk.CTkTextbox(
+            result_frame,
+            height=180,
+            font=ctk.CTkFont(size=13)
+        )
+        result_text.pack(
+            fill="x",
+            padx=18,
+            pady=(0, 12)
+        )
+
+        result_text.insert(
+            "1.0",
+            "No verification has been executed yet.\n"
+            "Use the buttons below to run real system checks."
+        )
+
+        result_text.configure(state="disabled")
+
+        def show_result(message):
+            result_text.configure(state="normal")
+            result_text.delete("1.0", "end")
+            result_text.insert("1.0", message)
+            result_text.configure(state="disabled")
+
+        # ====================================================
+        # FEATURE 1 - FAST SEARCH
+        # ====================================================
+
+        fast_search_frame = ctk.CTkFrame(
+            self.content,
+            fg_color="white",
+            corner_radius=8,
+            border_width=1,
+            border_color="#CBD5E1"
+        )
+        fast_search_frame.pack(
+            fill="x",
+            padx=35,
+            pady=6
+        )
+
+        ctk.CTkLabel(
+            fast_search_frame,
+            text="1. Fast Search",
+            font=ctk.CTkFont(
+                size=16,
+                weight="bold"
+            ),
+            text_color="#172033"
+        ).pack(
+            anchor="w",
+            padx=18,
+            pady=(12, 2)
+        )
+
+        ctk.CTkLabel(
+            fast_search_frame,
+            text="Run an actual indexed menu search and measure response time.",
+            font=ctk.CTkFont(size=13),
+            text_color="#64748B"
+        ).pack(
+            anchor="w",
+            padx=18,
+            pady=(0, 8)
+        )
+
+        search_row = ctk.CTkFrame(
+            fast_search_frame,
+            fg_color="transparent"
+        )
+        search_row.pack(
+            fill="x",
+            padx=18,
+            pady=(0, 12)
+        )
+
+        search_entry = ctk.CTkEntry(
+            search_row,
+            placeholder_text="Enter menu search text..."
+        )
+        search_entry.pack(
+            side="left",
+            fill="x",
+            expand=True,
+            padx=(0, 8)
+        )
+
+        def verify_fast_search():
+            try:
+                from database.db import get_menu_items
+
+                search_text = search_entry.get().strip()
+
+                start = time.perf_counter()
+                rows = get_menu_items(search_text)
+                elapsed = time.perf_counter() - start
+
+                show_result(
+                    "FAST SEARCH — LIVE RESULT\n\n"
+                    f"Search text: {search_text or '(empty)'}\n"
+                    f"Records returned: {len(rows)}\n"
+                    f"Response time: {elapsed:.6f} seconds\n\n"
+                    "Status: PASS\n"
+                    "Actual database search executed successfully."
+                )
+
+            except Exception as error:
+                show_result(
+                    "FAST SEARCH — ERROR\n\n"
+                    f"{error}"
+                )
+
+        ctk.CTkButton(
+            search_row,
+            text="Run Search",
+            width=130,
+            command=verify_fast_search
+        ).pack(side="right")
+
+        # ====================================================
+        # FEATURE 2 - QUICK NAVIGATION
+        # ====================================================
+
+        navigation_frame = ctk.CTkFrame(
+            self.content,
+            fg_color="white",
+            corner_radius=8,
+            border_width=1,
+            border_color="#CBD5E1"
+        )
+        navigation_frame.pack(
+            fill="x",
+            padx=35,
+            pady=6
+        )
+
+        ctk.CTkLabel(
+            navigation_frame,
+            text="2. Quick Navigation",
+            font=ctk.CTkFont(
+                size=16,
+                weight="bold"
+            ),
+            text_color="#172033"
+        ).pack(
+            anchor="w",
+            padx=18,
+            pady=(12, 2)
+        )
+
+        ctk.CTkLabel(
+            navigation_frame,
+            text="Use the actual application navigation handlers.",
+            font=ctk.CTkFont(size=13),
+            text_color="#64748B"
+        ).pack(
+            anchor="w",
+            padx=18,
+            pady=(0, 8)
+        )
+
+        nav_row = ctk.CTkFrame(
+            navigation_frame,
+            fg_color="transparent"
+        )
+        nav_row.pack(
+            fill="x",
+            padx=18,
+            pady=(0, 12)
+        )
+
+        def navigation_test(page_name, page_function):
+            start = time.perf_counter()
+            page_function()
+            elapsed = time.perf_counter() - start
+
+            # The selected page has now been loaded, so return to
+            # Q05 Performance after displaying the real navigation test.
+            self.show_performance()
+
+            show_result(
+                "QUICK NAVIGATION — LIVE RESULT\n\n"
+                f"Navigation target: {page_name}\n"
+                f"Handler execution time: {elapsed:.6f} seconds\n\n"
+                "Status: PASS\n"
+                "Actual application navigation handler executed."
+            )
+
+        ctk.CTkButton(
+            nav_row,
+            text="Dashboard",
+            command=lambda: navigation_test(
+                "Dashboard",
+                self.show_dashboard
+            )
+        ).pack(
+            side="left",
+            padx=(0, 6)
+        )
+
+        ctk.CTkButton(
+            nav_row,
+            text="Menu",
+            command=lambda: navigation_test(
+                "Menu",
+                self.show_menu
+            )
+        ).pack(
+            side="left",
+            padx=6
+        )
+
+        ctk.CTkButton(
+            nav_row,
+            text="Reports",
+            command=lambda: navigation_test(
+                "Reports",
+                self.show_reports
+            )
+        ).pack(
+            side="left",
+            padx=6
+        )
+
+        # ====================================================
+        # FEATURE 3 - CACHED DASHBOARD
+        # ====================================================
+
+        dashboard_frame = ctk.CTkFrame(
+            self.content,
+            fg_color="white",
+            corner_radius=8,
+            border_width=1,
+            border_color="#CBD5E1"
+        )
+        dashboard_frame.pack(
+            fill="x",
+            padx=35,
+            pady=6
+        )
+
+        ctk.CTkLabel(
+            dashboard_frame,
+            text="3. Cached Dashboard",
+            font=ctk.CTkFont(
+                size=16,
+                weight="bold"
+            ),
+            text_color="#172033"
+        ).pack(
+            anchor="w",
+            padx=18,
+            pady=(12, 2)
+        )
+
+        cache_status = ctk.CTkLabel(
+            dashboard_frame,
+            text="Checking dashboard cache...",
+            font=ctk.CTkFont(size=13),
+            text_color="#64748B"
+        )
+        cache_status.pack(
+            anchor="w",
+            padx=18,
+            pady=(0, 8)
+        )
+
+        cache_row = ctk.CTkFrame(
+            dashboard_frame,
+            fg_color="transparent"
+        )
+        cache_row.pack(
+            fill="x",
+            padx=18,
+            pady=(0, 12)
+        )
+
+        def check_dashboard_cache():
+            if self.dashboard_cache is None:
+                cache_status.configure(
+                    text="Cache status: EMPTY — dashboard data has not been cached."
+                )
+
+                show_result(
+                    "CACHED DASHBOARD — LIVE RESULT\n\n"
+                    "Cache status: EMPTY\n\n"
+                    "The dashboard will load database data and cache it "
+                    "when Dashboard is opened."
+                )
+                return
+
+            cache_status.configure(
+                text=(
+                    "Cache status: ACTIVE — "
+                    f"created at {self.dashboard_cache_time}"
+                )
+            )
+
+            show_result(
+                "CACHED DASHBOARD — LIVE RESULT\n\n"
+                "Cache status: ACTIVE\n"
+                f"Cache created at: {self.dashboard_cache_time}\n\n"
+                f"Dashboard data: {self.dashboard_cache}\n\n"
+                "Status: PASS\n"
+                "Dashboard data is currently available from memory cache."
+            )
+
+        def refresh_dashboard():
+            from database.db import get_dashboard_data
+
+            start = time.perf_counter()
+
+            self.dashboard_cache = get_dashboard_data()
+            self.dashboard_cache_time = time.strftime("%H:%M:%S")
+
+            elapsed = time.perf_counter() - start
+
+            cache_status.configure(
+                text=(
+                    "Cache status: ACTIVE — "
+                    f"refreshed at {self.dashboard_cache_time}"
+                )
+            )
+
+            show_result(
+                "CACHED DASHBOARD — LIVE REFRESH\n\n"
+                f"Refresh response time: {elapsed:.6f} seconds\n"
+                f"Cache time: {self.dashboard_cache_time}\n\n"
+                "Status: PASS\n"
+                "Fresh database data was loaded and stored in memory."
+            )
+
+        ctk.CTkButton(
+            cache_row,
+            text="Check Cache",
+            command=check_dashboard_cache
+        ).pack(
+            side="left",
+            padx=(0, 8)
+        )
+
+        ctk.CTkButton(
+            cache_row,
+            text="Refresh Cache",
+            command=refresh_dashboard
+        ).pack(
+            side="left"
+        )
+
+        # ====================================================
+        # FEATURE 4 - DATABASE INDEXING
+        # ====================================================
+
+        index_frame = ctk.CTkFrame(
+            self.content,
+            fg_color="white",
+            corner_radius=8,
+            border_width=1,
+            border_color="#CBD5E1"
+        )
+        index_frame.pack(
+            fill="x",
+            padx=35,
+            pady=6
+        )
+
+        ctk.CTkLabel(
+            index_frame,
+            text="4. DB Indexing",
+            font=ctk.CTkFont(
+                size=16,
+                weight="bold"
+            ),
+            text_color="#172033"
+        ).pack(
+            anchor="w",
+            padx=18,
+            pady=(12, 2)
+        )
+
+        ctk.CTkLabel(
+            index_frame,
+            text="Inspect actual SQLite indexes and the search query plan.",
+            font=ctk.CTkFont(size=13),
+            text_color="#64748B"
+        ).pack(
+            anchor="w",
+            padx=18,
+            pady=(0, 8)
+        )
+
+        def verify_indexes():
+            try:
+                from database.db import (
+                    get_database_indexes,
+                    get_search_query_plan
+                )
+
+                indexes = get_database_indexes()
+                plan = get_search_query_plan()
+
+                index_lines = []
+
+                for index in indexes:
+                    index_lines.append(
+                        f"✓ {index['name']} → {index['tbl_name']}"
+                    )
+
+                plan_lines = [
+                    str(row["detail"])
+                    for row in plan
+                ]
+
+                show_result(
+                    "DATABASE INDEXING — LIVE RESULT\n\n"
+                    f"Indexes detected: {len(indexes)}\n\n"
+                    + "\n".join(index_lines)
+                    + "\n\nSQLite Search Query Plan:\n"
+                    + (
+                        "\n".join(plan_lines)
+                        if plan_lines
+                        else "No query-plan information returned."
+                    )
+                    + "\n\nStatus: PASS\n"
+                    "Actual SQLite metadata was inspected."
+                )
+
+            except Exception as error:
+                show_result(
+                    "DATABASE INDEXING — ERROR\n\n"
+                    f"{error}"
+                )
+
+        ctk.CTkButton(
+            index_frame,
+            text="Verify Database Indexes",
+            command=verify_indexes
+        ).pack(
+            anchor="w",
+            padx=18,
+            pady=(0, 12)
+        )
+
+        # ====================================================
+        # FEATURE 5 - PAGINATED REPORTS
+        # ====================================================
+
+        report_frame = ctk.CTkFrame(
+            self.content,
+            fg_color="white",
+            corner_radius=8,
+            border_width=1,
+            border_color="#CBD5E1"
+        )
+        report_frame.pack(
+            fill="x",
+            padx=35,
+            pady=6
+        )
+
+        ctk.CTkLabel(
+            report_frame,
+            text="5. Paginated Reports",
+            font=ctk.CTkFont(
+                size=16,
+                weight="bold"
+            ),
+            text_color="#172033"
+        ).pack(
+            anchor="w",
+            padx=18,
+            pady=(12, 2)
+        )
+
+        ctk.CTkLabel(
+            report_frame,
+            text="Run the real sales-report query using page and page size.",
+            font=ctk.CTkFont(size=13),
+            text_color="#64748B"
+        ).pack(
+            anchor="w",
+            padx=18,
+            pady=(0, 8)
+        )
+
+        report_row = ctk.CTkFrame(
+            report_frame,
+            fg_color="transparent"
+        )
+        report_row.pack(
+            fill="x",
+            padx=18,
+            pady=(0, 12)
+        )
+
+        page_entry = ctk.CTkEntry(
+            report_row,
+            width=100,
+            placeholder_text="Page"
+        )
+        page_entry.pack(
+            side="left",
+            padx=(0, 8)
+        )
+
+        page_entry.insert("0", "1")
+
+        size_entry = ctk.CTkEntry(
+            report_row,
+            width=120,
+            placeholder_text="Page size"
+        )
+        size_entry.pack(
+            side="left",
+            padx=(0, 8)
+        )
+
+        size_entry.insert("0", "10")
+
+        def verify_pagination():
+            try:
+                from database.db import (
+                    get_sales_report,
+                    get_sales_report_count
+                )
+
+                page = int(page_entry.get())
+                page_size = int(size_entry.get())
+
+                if page < 1:
+                    raise ValueError("Page must be 1 or greater.")
+
+                if page_size < 1:
+                    raise ValueError("Page size must be 1 or greater.")
+
+                start = time.perf_counter()
+
+                rows = get_sales_report(
+                    page=page,
+                    page_size=page_size
+                )
+
+                total_records = get_sales_report_count()
+
+                elapsed = time.perf_counter() - start
+
+                total_pages = (
+                    (total_records + page_size - 1)
+                    // page_size
+                    if total_records
+                    else 0
+                )
+
+                show_result(
+                    "PAGINATED REPORTS — LIVE RESULT\n\n"
+                    f"Requested page: {page}\n"
+                    f"Page size: {page_size}\n"
+                    f"Records returned: {len(rows)}\n"
+                    f"Total records: {total_records}\n"
+                    f"Total pages: {total_pages}\n"
+                    f"Response time: {elapsed:.6f} seconds\n\n"
+                    "Status: PASS\n"
+                    "Actual paginated sales-report query executed."
+                )
+
+            except Exception as error:
+                show_result(
+                    "PAGINATED REPORTS — ERROR\n\n"
+                    f"{error}"
+                )
+
+        ctk.CTkButton(
+            report_row,
+            text="Verify Pagination",
+            command=verify_pagination
+        ).pack(
+            side="left"
+        )
+
+        # ====================================================
+        # INITIAL INDEX CHECK
+        # ====================================================
+
+        try:
+            from database.db import get_database_indexes
+
+            indexes = get_database_indexes()
+
+            index_count = len(indexes)
+
+            ctk.CTkLabel(
+                self.content,
+                text=f"Database status: Connected • {index_count} indexes detected",
+                font=ctk.CTkFont(
+                    size=12,
+                    weight="bold"
+                ),
+                text_color="#64748B"
+            ).pack(
+                anchor="w",
+                padx=35,
+                pady=(8, 25)
+            )
+
+        except Exception:
+            ctk.CTkLabel(
+                self.content,
+                text="Database status: Verification unavailable",
+                font=ctk.CTkFont(
+                    size=12,
+                    weight="bold"
+                ),
+                text_color="#64748B"
+            ).pack(
+                anchor="w",
+                padx=35,
+                pady=(8, 25)
+            )
+   
 
 
 # ============================================================

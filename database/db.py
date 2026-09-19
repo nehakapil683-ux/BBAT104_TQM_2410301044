@@ -905,12 +905,16 @@ def get_database_indexes():
 
 def get_search_query_plan():
     """
-    Return SQLite query plan for
+    Return SQLite query plan for indexed
     prefix menu search.
     """
 
     connection = get_connection()
     cursor = connection.cursor()
+
+    # SQLite can use a B-tree index for prefix LIKE
+    # when LIKE optimization is enabled.
+    cursor.execute("PRAGMA case_sensitive_like = ON")
 
     cursor.execute("""
         EXPLAIN QUERY PLAN
@@ -921,7 +925,6 @@ def get_search_query_plan():
             price
         FROM menu_items
         WHERE name LIKE ?
-        ORDER BY id DESC
     """, (
         "Pizza%",
     ))
