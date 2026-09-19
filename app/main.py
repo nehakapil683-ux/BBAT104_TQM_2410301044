@@ -193,17 +193,18 @@ class RestaurantBillingApp(ctk.CTk):
 
     def create_content_area(self):
 
-        self.content = ctk.CTkFrame(
+        self.content = ctk.CTkScrollableFrame(
             self,
             corner_radius=0,
-            fg_color="#F5F7FA"
+            fg_color="#F5F7FA",
+            scrollbar_button_color="#94A3B8",
+            scrollbar_button_hover_color="#64748B"
         )
 
         self.content.pack(
             fill="both",
             expand=True
         )
-
     # ========================================================
     # CLEAR CONTENT
     # ========================================================
@@ -271,13 +272,15 @@ class RestaurantBillingApp(ctk.CTk):
             "Quick overview of restaurant billing operations"
         )
 
-        # ----------------------------------------------------
-        # CACHE CHECK
-        # ----------------------------------------------------
+       # ----------------------------------------------------
+       # CACHE CHECK
+       # ----------------------------------------------------
 
         if self.dashboard_cache is None:
-
-            self.refresh_dashboard_cache()
+            self.dashboard_cache = get_dashboard_data()
+            self.dashboard_cache_time = datetime.now().strftime(
+                "%H:%M:%S"
+            )
 
         data = self.dashboard_cache
 
@@ -405,7 +408,7 @@ class RestaurantBillingApp(ctk.CTk):
     # ========================================================
     # STAT CARD
     # ========================================================
-
+    
     def create_stat_card(
         self,
         parent,
@@ -414,10 +417,9 @@ class RestaurantBillingApp(ctk.CTk):
         row,
         column
     ):
-
         card = ctk.CTkFrame(
             parent,
-            height=125,
+            height=120,
             corner_radius=8,
             fg_color="white",
             border_width=1,
@@ -445,20 +447,22 @@ class RestaurantBillingApp(ctk.CTk):
         )
 
         label_widget.pack(
-            pady=(20, 3)
+            pady=(18, 2)
         )
 
         value_widget = ctk.CTkLabel(
             card,
             text=value,
             font=ctk.CTkFont(
-                size=25,
+                size=24,
                 weight="bold"
             ),
             text_color="#172033"
         )
 
-        value_widget.pack()
+        value_widget.pack(
+            pady=(2, 12)
+        )
 
     # ========================================================
     # DASHBOARD CACHE
