@@ -121,18 +121,6 @@ class RestaurantBillingApp(ctk.CTk):
             pady=(18, 2)
         )
 
-        subtitle = ctk.CTkLabel(
-            header,
-            text="Q05 • Reduce Response Time",
-            font=ctk.CTkFont(
-                family="Arial",
-                size=15
-            ),
-            text_color="#D8DEE9"
-        )
-
-        subtitle.pack()
-
     # ========================================================
     # NAVIGATION
     # ========================================================
